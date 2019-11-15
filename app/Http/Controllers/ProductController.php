@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = $this->product->orderBy('id')->paginate(10);
+        $product = $this->product->orderBy('id', 'DESC')->paginate(10);
         return view('product.index', compact('product', $product));
     }
 
