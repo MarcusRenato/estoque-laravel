@@ -49,6 +49,5 @@
         @include('flash::message')
         @yield('content')
     </main>
-</body>
 
 </html>

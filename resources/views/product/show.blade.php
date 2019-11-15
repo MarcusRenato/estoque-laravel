@@ -10,7 +10,7 @@
                 </div>
             
                 <div class="card-body text-monospace">
-                    <table class="table bordered-none">
+                    <table class="table">
                         <tr>
                             <td>Descrição:</td>
                             <td>{{$product->description}}</td>

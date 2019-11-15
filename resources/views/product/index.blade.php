@@ -6,7 +6,7 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr class="text-center">
-                <th>#</th>
+                
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Preço</th>
@@ -18,7 +18,7 @@
         <tbody>
             @forelse ($product as $p)
                 <tr>
-                    <td>{{$p->id}}</td>
+                    
                     <td>
                         <a href="{{route('product.show', ['product' => $p->id])}}">{{$p->name}}</a>
                     </td>
