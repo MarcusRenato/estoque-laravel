@@ -4,17 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
-use App\Product;
+use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    private $product;
-    public function __construct(Product $products)
+    private $productService;
+
+    public function __construct(ProductService $productService)
     {
+        $this->productService = $productService;
+
         $this->middleware('auth')->except('index');
-        $this->product = $products;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,8 +25,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = $this->product->orderBy('id', 'DESC')->paginate(10);
-        return view('product.index', compact('product', $product));
+        $product = $this->productService->getAll();
+
+        return view('product.index', compact('product'));
     }
 
     /**
@@ -44,14 +48,16 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        try {
-            $this->product->create($request->all());
-            flash('Produto cadastrado com sucesso!')->success();
-            return redirect()->route('product.index')->withInput($request->only('name'));
-        } catch (\Throwable $e) {
-            flash($e->getMessage())->warning();
-            return redirect()->back();
+        if (!$this->productService->store($request->all())) {
+            flash('Ocorreu um erro.')->warning();
+            return redirect()
+                ->back()
+                ->withInput();
         }
+
+        flash('Produto inserido com sucesso!')->success();
+        return redirect()
+            ->route('product.index');
     }
 
     /**
@@ -62,9 +68,9 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = $this->product->findOrFail($id);
+        $product = $this->productService->get($id);
 
-        return view('product.show', compact('product', $product));
+        return view('product.show', compact('product'));
     }
 
     /**
@@ -75,9 +81,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = $this->product->findOrFail($id);
+        $product = $this->productService->get($id);
 
-        return view('product.edit', compact('product', $product));
+        return view('product.edit', compact('product'));
     }
 
     /**
@@ -89,17 +95,15 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $data = $request->all();
-            $product = $this->product->findOrFail($id);
-            $product->update($data);
-
-            flash('Produto alterado com sucesso!')->success();
-            return redirect()->route('product.index');
-        } catch (\Throwable $e) {
-            flash($e->getMessage())->warning();
-            return redirect()->back();
+        if (!$this->productService->update($id, $request->all())) {
+            flash('Ocorreu um erro.')->warning();
+            return redirect()
+                ->back()
+                ->withInput();
         }
+
+        flash('Produto alterado com sucesso!')->success();
+        return redirect()->route('product.index');
     }
 
     /**
@@ -110,17 +114,14 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $product = $this->product->findOrFail($id);
-            $product->delete();
-
-            flash('Produto removido com sucesso!')->success();
-            return redirect()->route('product.index');
-        } catch (\Exception $e) {
-            flash($e->getMessage())->error();
-
-            return redirect()->back();
+        if (!$this->productService->destroy($id)) {
+            flash('Ocorreu um erro.')->warning();
+            return redirect()
+                ->back();
         }
+
+        flash('Produto excluído com sucesso!')->success();
+        return redirect()->back();
     }
 
     public function logout()
