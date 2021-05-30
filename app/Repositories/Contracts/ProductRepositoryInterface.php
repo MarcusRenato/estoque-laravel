@@ -14,5 +14,5 @@ interface ProductRepositoryInterface
 
     public function destroy(int $id);
 
-    public function paginate($number = 15);
+    public function paginate(int $number = 15);
 }

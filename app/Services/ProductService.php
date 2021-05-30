@@ -3,17 +3,16 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\ProductRepositoryInterface;
+use Illuminate\Pagination\AbstractPaginator;
 
 class ProductService
 {
-    private $productRepository;
-
-    public function __construct(ProductRepositoryInterface $productRepositoryInterface)
-    {
-        $this->productRepository = $productRepositoryInterface;
+    public function __construct(
+        protected ProductRepositoryInterface $productRepository
+    ) {
     }
 
-    public function getAll()
+    public function getAll(): AbstractPaginator
     {
         try {
             return $this->productRepository->paginate();
@@ -22,7 +21,7 @@ class ProductService
         }
     }
 
-    public function store($data)
+    public function store(array $data)
     {
         try {
             return $this->productRepository->store($data);
@@ -31,12 +30,12 @@ class ProductService
         }
     }
 
-    public function get($id)
+    public function get(int $id): mixed
     {
         return $this->productRepository->get($id);
     }
 
-    public function update($id, $data)
+    public function update(int $id, array $data): bool
     {
         try {
             return $this->productRepository->update($id, $data);
@@ -45,7 +44,7 @@ class ProductService
         }
     }
 
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         try {
             return $this->productRepository->destroy($id);

@@ -9,12 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    private $productService;
-
-    public function __construct(ProductService $productService)
+    public function __construct(protected ProductService $productService)
     {
-        $this->productService = $productService;
-
         $this->middleware('auth')->except('index');
     }
 
